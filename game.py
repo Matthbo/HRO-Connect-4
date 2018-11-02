@@ -8,6 +8,9 @@ def init_canvas():
   canvas.create_rectangle(0, 0, width, height, fill="#4259f4")
   return canvas
 
+def onclick(event):
+  # find element, find column, check where to change state
+
 def draw_circle(posX, posY, size):
   return canvas.create_oval(posX, posY, posX + size, posY + size, fill="#fff")
 
@@ -54,7 +57,7 @@ circle_size = 70
 canvas = init_canvas()
 grid = draw_grid(width, height, circle_size, draw_offset)
 print(grid)
-#oval = draw_circle()
+#oval = draw_circle()from enum import Enumfrom enum import Enum
 #canvas.tag_bind(oval, '<Button-1>', test)
 
 game.mainloop()
