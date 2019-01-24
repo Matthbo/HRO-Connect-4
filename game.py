@@ -92,7 +92,8 @@ status = {'text1': "Current player: ", 'text2': "Player 1", 'color1': "#F00", 'c
 
 canvas = init_canvas()
 statusTextItem = canvas.create_text(draw_offset * 2, height - 50 + draw_offset, text=(status['text1'] + status['text2']), anchor=NW)
-statusColorItem = canvas.create_oval(draw_offset * 2 + 125, height - 50 + draw_offset, draw_offset * 2 + 125 + 15, height - 50 + draw_offset + 15, fill=status['color1'])
+canvas.create_text(draw_offset * 2, height - 25 + draw_offset, text="Player colour:", anchor=NW)
+statusColorItem = canvas.create_oval(draw_offset * 2 + 105, height - 25 + draw_offset, draw_offset * 2 + 105 + 15, height - 25 + draw_offset + 15, fill=status['color1'])
 grid = draw_grid(canvas, width, height - 50, circle_size, draw_offset)
 
 game.mainloop()
