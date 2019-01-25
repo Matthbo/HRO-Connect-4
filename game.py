@@ -16,6 +16,7 @@ def win():
   global popupWindow
   popupWindow = Toplevel(game)
   popupWindow.resizable(False, False)
+  popupWindow.wait_visibility()
   popupWindow.grab_set()
 
   popupCanvas = Canvas(popupWindow, width=300, height=100)
