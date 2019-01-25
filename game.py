@@ -62,7 +62,6 @@ def winCheck(itemPos):
          connectCount += 1
     return True if connectCount == 3 else False
   
-  print(itemPos)
   left = moveAndCheck(lambda pos: {'column': pos['column']-1, 'row': pos['row']} )
   right = moveAndCheck(lambda pos: {'column': pos['column']+1, 'row': pos['row']} )
   down = moveAndCheck(lambda pos: {'column': pos['column'], 'row': pos['row']-1} )
