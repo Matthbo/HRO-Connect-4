@@ -8,6 +8,23 @@ def init_canvas():
   canvas.create_rectangle(0, 0, width, height - 50, fill='#4259f4')
   return canvas
 
+def stop():
+  popupWindow.destroy()
+  game.destroy()
+
+def win():
+  global popupWindow
+  popupWindow = Toplevel(game)
+  popupWindow.resizable(False, False)
+  popupWindow.grab_set()
+
+  popupCanvas = Canvas(popupWindow, width=300, height=100)
+  popupCanvas.pack()
+  playerName = "Player 1" if currentPlayer == State.PLAYER1 else "Player 2"
+  popupCanvas.create_text(draw_offset * 2, draw_offset * 2, text=(playerName + " Has Won!"), font=("Helvetica", 20), anchor=NW)
+  btn = Button(popupWindow, text="Quit", command=stop)
+  btn.pack()
+
 def findItemInGrid(id):
   for i in range(len(grid)):
     column = grid[i]
@@ -33,21 +50,45 @@ def nextStep():
   canvas.itemconfig(statusTextItem, text=(status['text1'] + status['text2']))
   canvas.itemconfig(statusColorItem, fill=newColor)
 
+def winCheck(itemPos):
+  def moveAndCheck(moveAction):
+    currentPos = itemPos
+    connectCount = 0
+    for i in range(1, 4):
+      currentPos = moveAction(currentPos)
+      if currentPos['column'] >= 0 and currentPos['column'] < gridColumns and currentPos['row'] >= 0 and currentPos['row'] < gridRows and \
+      grid[currentPos['column']][currentPos['row']]['state'] == currentPlayer:
+         connectCount += 1
+    return True if connectCount == 3 else False
+  
+  print(itemPos)
+  left = moveAndCheck(lambda pos: {'column': pos['column']-1, 'row': pos['row']} )
+  right = moveAndCheck(lambda pos: {'column': pos['column']+1, 'row': pos['row']} )
+  down = moveAndCheck(lambda pos: {'column': pos['column'], 'row': pos['row']-1} )
+  dLeft = moveAndCheck(lambda pos: {'column': pos['column']-1, 'row': pos['row']-1})
+  dRight = moveAndCheck(lambda pos: {'column': pos['column']+1, 'row': pos['row']-1})
+  if left or right or down or dLeft or dRight: 
+    win()
+  else: nextStep()
+
 def onclick(event):
   item = event.widget.find_closest(event.x, event.y)[0]
-
   itemPos = findItemInGrid(item) 
+
   if itemPos is not None:
     nxt = False
+    rowCount = -1
     for row in grid[itemPos['column']]:
+      rowCount += 1
+
       if row['state'] == State.EMPTY:
         row['state'] = currentPlayer
         if currentPlayer == State.PLAYER1: canvas.itemconfig(row['id'], fill=status['color1'])
         else: canvas.itemconfig(row['id'], fill=status['color2'])
         nxt = True
+        itemPos['row'] = rowCount
         break
-    if nxt: nextStep()
-
+    if nxt: winCheck(itemPos)
 
 def draw_circle(canvas, posX, posY, size):
   return canvas.create_oval(posX, posY, posX + size, posY + size, fill='#fff')
@@ -66,7 +107,6 @@ def draw_grid(canvas, width, height, size, offset):
       rows.insert(row, {'id': circle_id, 'state': State.EMPTY})
     
     columns.insert(column, tuple(rows))
-
   return tuple(columns)
 
 class State(Enum):
@@ -81,6 +121,7 @@ gridRows = 6
 game = Tk()
 game.configure(background='white')
 game.title("Connect 4 by Matthijs Booman")
+popupWindow = None
 
 width = 600
 height = 550
